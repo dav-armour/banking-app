@@ -5,12 +5,15 @@ $balance = 0.0
 $message = ""
 
 def loginMenu
-  # FIXME: implement login
+  system('clear')
   displayLogin
   print "Username: "
   user = gets.chomp
+  # FIXME: Check if user exists
   print "Password: "
+  # FIXME: Hide password
   pass = gets.chomp
+  # FIXME: Check password matches
   $message = "Welcome #{user.capitalize}"
   mainMenu
 end
