@@ -45,7 +45,7 @@ def mainMenu
   when "3"
     print "How much to withdraw: $"
     amount = getAmount
-    updateBalance(-amount)
+    success = updateBalance(-amount)
     $message = "Succesfully Withdrew $%.2f" % amount
     $message += "\nNew Balance: $%.2f" % $balance
     mainMenu
@@ -98,11 +98,13 @@ end
 
 def updateBalance(amount)
   # check if withdrawing and there is enough funds
-  if amount < 0 and ($balance - amount) < 0
+  if ($balance + amount) < 0
     system('clear')
     $message = "ERROR: Not enough funds"
+    mainMenu
+  else
+    $balance += amount.round(2)
   end
-  $balance += amount.round(2)
 end
 
 # run program
