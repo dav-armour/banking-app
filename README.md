@@ -1,11 +1,11 @@
-#Davo's Banking App
-###Demo ruby terminal app
+# Davo's Banking App
+### Demo ruby terminal app
 
-####Working Functions:
+#### Working Functions:
 - Show Balance
 - Deposit Money
 - Withdraw Money
 
-####Work in progress:
+#### Work in progress:
 - Login
 - Make balance persistent using storage file
