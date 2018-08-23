@@ -29,9 +29,11 @@ def mainMenu
   print "Choose Option (1-4): "
   input = gets.chomp
   case input
+  # View Balance
   when "1"
     $message = "Balance: $%.2f" % $balance
     mainMenu
+  # Deposit Money
   when "2"
     print "How much to deposit: $"
     amount = getAmount
@@ -39,6 +41,7 @@ def mainMenu
     $message = "Succesfully Deposited $%.2f" % amount
     $message += "\nNew Balance: $%.2f" % $balance
     mainMenu
+  # Withdraw Money
   when "3"
     print "How much to withdraw: $"
     amount = getAmount
@@ -46,6 +49,7 @@ def mainMenu
     $message = "Succesfully Withdrew $%.2f" % amount
     $message += "\nNew Balance: $%.2f" % $balance
     mainMenu
+  # Exit
   when "4"
     return
   else
@@ -54,7 +58,7 @@ def mainMenu
   end
 end
 
-# prints main menu to screen using ASCII art :P
+# Prints main menu to screen using ASCII art :P
 def displayMenu
   puts "-----------------------------"
   puts "|     Davo's Banking App    |"
@@ -68,6 +72,7 @@ def displayMenu
   puts "-----------------------------"
 end
 
+# More super stylish design skills
 def displayLogin
   puts "-----------------------------"
   puts "|     Davo's Banking App    |"
@@ -81,6 +86,7 @@ def displayLogin
   puts "-----------------------------"
 end
 
+# get input amount from user and check for errors
 def getAmount
   amount = gets.chomp.to_f
   if amount < 0
