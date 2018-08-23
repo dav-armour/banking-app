@@ -1,7 +1,7 @@
 # Davo's Banking App
 ### Demo ruby terminal app
 
-![Image of Yaktocat](https://imgur.com/a/QXueSUf)
+![Screenshot of app](http://i63.tinypic.com/inwmmc.png)
 
 #### Working Functions:
 - Show Balance
