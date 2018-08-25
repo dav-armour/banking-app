@@ -10,21 +10,18 @@ $message = ""
 def login_menu
   system('clear')
   display_login
+  $message = ""
   print "Username: "
   user = gets.chomp
-  # FIXME: Check if user exists
   if File.file?("./user-data/#{user}.txt")
-    # puts "User Exists"
     userHashes = read_from_file("./user-data/#{user}.txt")
     userInfoHash = userHashes.first
-    # puts userHashes.first
     print "Password: "
     # FIXME: Hide password
     pass = gets.chomp
-    if pass == userInfoHash['pass']
-      puts "Password correct"
-    else
-      puts "Password incorrect"
+    if pass != userInfoHash['pass']
+      $message = "Password incorrect"
+      login_menu
     end
     userInfoHash['balance'] = userInfoHash['balance']
     $message = "Welcome #{userInfoHash['realName']}"
@@ -67,6 +64,7 @@ def main_menu(userInfoHash)
     main_menu(userInfoHash)
   # Exit
   when "5"
+    system('clear')
     exit
   else
     $message = "ERROR: Invalid selection!"
@@ -76,40 +74,40 @@ end
 
 # Prints main menu to screen using ASCII art :P
 def display_menu
-  puts "-----------------------------"
-  puts "|     Davo's Banking App    |"
-  puts "-----------------------------"
-  puts "|                           |"
-  puts "| 1) View Balance           |"
-  puts "| 2) Deposit Money          |"
-  puts "| 3) Withdraw Money         |"
-  puts "| 4) Transaction History    |"
-  puts "| 5) Exit                   |"
-  puts "|                           |"
-  puts "-----------------------------"
+  puts "-------------------------------------------------"
+  puts "|              Davo's Banking App               |"
+  puts "-------------------------------------------------"
+  puts "|                                               |"
+  puts "|             1) View Balance                   |"
+  puts "|             2) Deposit Money                  |"
+  puts "|             3) Withdraw Money                 |"
+  puts "|             4) Transaction History            |"
+  puts "|             5) Exit                           |"
+  puts "|                                               |"
+  puts "-------------------------------------------------"
   display_msg
 end
 
 # More super stylish design skills
 def display_login
-  puts "-----------------------------"
-  puts "|     Davo's Banking App    |"
-  puts "-----------------------------"
-  puts "|                           |"
-  puts "|                           |"
-  puts "|   Please login            |"
-  puts "|      to cointinue...      |"
-  puts "|                           |"
-  puts "|                           |"
-  puts "|                           |"
-  puts "-----------------------------"
+  puts "-------------------------------------------------"
+  puts "|              Davo's Banking App               |"
+  puts "-------------------------------------------------"
+  puts "|                                               |"
+  puts "|                                               |"
+  puts "|              Please login                     |"
+  puts "|                  to cointinue...              |"
+  puts "|                                               |"
+  puts "|                                               |"
+  puts "|                                               |"
+  puts "-------------------------------------------------"
   display_msg
 end
 
 def display_msg
   if $message != ""
     puts $message
-    puts "-----------------------------"
+    # puts "---------------------------------------------"
   end
   $message = ""
 end
@@ -140,6 +138,12 @@ def update_balance(amount, userInfoHash)
     system('clear')
     $message = "ERROR: Not enough funds"
     main_menu(userInfoHash)
+  # Limit balances to < $1 million to not mess up display
+  elsif (userInfoHash['balance'] + amount) >= 1000000
+    system('clear')
+    $message = "ERROR: Your too rich for this bank."
+    $message += "\nOnly supports balances below $1 million"
+    main_menu(userInfoHash)
   else
     userInfoHash['balance'] += amount.round(2)
     update_user_info_file(userInfoHash)
@@ -148,12 +152,8 @@ end
 
 def add_transaction(amount, userInfoHash)
   update_balance(amount, userInfoHash)
-  # Check if transaction file exits
-  if File.file?("./user-data/#{userInfoHash['username']}_trans.txt")
-    puts "Transaction File exists"
-  else
-    puts "No Transaction File"
-    # Create transaction file if doesn't exist
+  # Create transaction file if doesn't exist
+  if not File.file?("./user-data/#{userInfoHash['username']}_trans.txt")
     transFile = File.new("./user-data/#{userInfoHash['username']}_trans.txt", "w")
     transFile.close
   end
@@ -163,29 +163,50 @@ def add_transaction(amount, userInfoHash)
 end
 
 def view_transactions(userInfoHash)
+  system('clear')
+  puts "-------------------------------------------------"
+  puts "|              Transaction History              |"
+  puts "-------------------------------------------------"
+  puts "|                                               |"
   path = './user-data/' + userInfoHash['username'] + '_trans.txt'
-  transHashArray = read_from_file(path)
-  # puts transHashArray
-  # Loop through all transactions
-  puts "Time                Amount      Balance"
-  transHashArray.each do |transHash|
-    # make time look pretty
-    time = DateTime.strptime(transHash['transTime'], '%Y-%m-%d %H:%M:%S %z')
-    timePretty = time.strftime('%d/%m/%Y %H:%M')
-    # Show two decimal places for money
-    if transHash['amount'] < 0
-      amount = '-$%.2f' % transHash['amount'].abs
-    else
-      amount = ' $%.2f' % transHash['amount']
+  # Check if transaction file exists
+  if File.file?(path)
+    transHashArray = read_from_file(path)
+    # Loop through all transactions
+    puts "|  Time                Amount       Balance     |"
+    transHashArray.last(5).each do |transHash|
+      # make time look pretty
+      time = DateTime.strptime(transHash['transTime'], '%Y-%m-%d %H:%M:%S %z')
+      timePretty = time.strftime('%d/%m/%Y %H:%M')
+      # Show two decimal places for money
+      if transHash['amount'] < 0
+        amount = '-$%.2f' % transHash['amount'].abs
+      else
+        amount = ' $%.2f' % transHash['amount']
+      end
+      # add padding
+      while amount.length < 11 do
+        amount += ' '
+      end
+      balance = '$%.2f' % transHash['balance']
+      # add padding
+      while balance.length < 10 do
+        balance += ' '
+      end
+      puts "|  #{timePretty}   #{amount}   #{balance}  |"
     end
     # add padding
-    while amount.length < 10 do
-      amount += ' '
+    (5 - transHashArray.last(5).length).times do
+      puts "|                                               |"
     end
-    balance = '$%.2f' % transHash['balance']
-    puts "#{timePretty}   #{amount}   #{balance}"
+  else
+    puts "|             No Transactions Found!            |"
+    5.times do
+      puts "|                                               |"
+    end
   end
-  puts "Press enter to continue "
+  puts "-------------------------------------------------"
+  print "Press enter to continue "
   gets
 end
 

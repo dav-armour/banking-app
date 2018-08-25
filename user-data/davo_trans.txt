@@ -1,5 +1,0 @@
-{"transTime":"2018-08-25 22:02:08 +1000","amount":10.0,"balance":325.0}
-{"transTime":"2018-08-25 22:02:15 +1000","amount":-20.0,"balance":305.0}
-{"transTime":"2018-08-25 22:02:18 +1000","amount":40.0,"balance":345.0}
-{"transTime":"2018-08-25 22:02:21 +1000","amount":-100.0,"balance":245.0}
-{"transTime":"2018-08-25 22:53:05 +1000","amount":10.0,"balance":255.0}
