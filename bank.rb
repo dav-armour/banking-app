@@ -4,12 +4,11 @@
 require_relative 'readWriteHashes.rb'
 
 # assign global variables
-$balance = 0.0
 $message = ""
 
-def loginMenu
+def login_menu
   system('clear')
-  displayLogin
+  display_login
   print "Username: "
   user = gets.chomp
   # FIXME: Check if user exists
@@ -26,52 +25,52 @@ def loginMenu
     else
       puts "Password incorrect"
     end
-    $balance = userInfoHash['balance']
+    userInfoHash['balance'] = userInfoHash['balance']
     $message = "Welcome #{userInfoHash['realName']}"
-    mainMenu(userInfoHash)
+    main_menu(userInfoHash)
   else
-    createNewUser
+    create_new_user
   end
 end
 
-def mainMenu(userInfoHash)
+def main_menu(userInfoHash)
   system('clear')
-  displayMenu
-  displayMsg
+  display_menu
+  display_msg
   print "Choose Option (1-4): "
   input = gets.chomp
   case input
   # View Balance
   when "1"
-    $message = "Balance: $%.2f" % $balance
-    mainMenu(userInfoHash)
+    $message = "Balance: $%.2f" % userInfoHash['balance']
+    main_menu(userInfoHash)
   # Deposit Money
   when "2"
     print "How much to deposit: $"
-    amount = getAmount
-    updateBalance(amount, userInfoHash)
+    amount = get_amount
+    update_balance(amount, userInfoHash)
     $message = "Succesfully Deposited $%.2f" % amount
-    $message += "\nNew Balance: $%.2f" % $balance
-    mainMenu(userInfoHash)
+    $message += "\nNew Balance: $%.2f" % userInfoHash['balance']
+    main_menu(userInfoHash)
   # Withdraw Money
   when "3"
     print "How much to withdraw: $"
-    amount = getAmount
-    success = updateBalance(-amount, userInfoHash)
+    amount = get_amount
+    success = update_balance(-amount, userInfoHash)
     $message = "Succesfully Withdrew $%.2f" % amount
-    $message += "\nNew Balance: $%.2f" % $balance
-    mainMenu(userInfoHash)
+    $message += "\nNew Balance: $%.2f" % userInfoHash['balance']
+    main_menu(userInfoHash)
   # Exit
   when "4"
     exit
   else
     $message = "ERROR: Invalid selection!"
-    mainMenu(userInfoHash)
+    main_menu(userInfoHash)
   end
 end
 
 # Prints main menu to screen using ASCII art :P
-def displayMenu
+def display_menu
   puts "-----------------------------"
   puts "|     Davo's Banking App    |"
   puts "-----------------------------"
@@ -82,11 +81,11 @@ def displayMenu
   puts "| 4) Exit                   |"
   puts "|                           |"
   puts "-----------------------------"
-  displayMsg
+  display_msg
 end
 
 # More super stylish design skills
-def displayLogin
+def display_login
   puts "-----------------------------"
   puts "|     Davo's Banking App    |"
   puts "-----------------------------"
@@ -97,10 +96,10 @@ def displayLogin
   puts "|                           |"
   puts "|                           |"
   puts "-----------------------------"
-  displayMsg
+  display_msg
 end
 
-def displayMsg
+def display_msg
   if $message != ""
     puts $message
     puts "-----------------------------"
@@ -110,7 +109,7 @@ end
 
 
 # get input amount from user and check for errors
-def getAmount
+def get_amount
   amount = gets.chomp.to_f
   if amount < 0
     system('clear')
@@ -119,7 +118,7 @@ def getAmount
   amount
 end
 
-def updateUserInfoFile(userInfoHash)
+def update_user_info_file(userInfoHash)
   # See for more on Open method options:  https://ruby-doc.org/core-2.5.1/IO.html#method-c-new
   path = './user-data/' + userInfoHash['username'] + '.txt'
   File.open(path, 'w') do |f|
@@ -128,23 +127,22 @@ def updateUserInfoFile(userInfoHash)
   end
 end
 
-def updateBalance(amount, userInfoHash)
+def update_balance(amount, userInfoHash)
   # check if withdrawing and there is enough funds
-  if ($balance + amount) < 0
+  if (userInfoHash['balance'] + amount) < 0
     system('clear')
     $message = "ERROR: Not enough funds"
-    mainMenu(userInfoHash)
+    main_menu(userInfoHash)
   else
-    $balance += amount.round(2)
-    userInfoHash['balance'] = $balance
-    updateUserInfoFile(userInfoHash)
+    userInfoHash['balance'] += amount.round(2)
+    update_user_info_file(userInfoHash)
   end
 end
 
-def createNewUser
+def create_new_user
   system('clear')
   $message = "ERROR: User not found"
-  displayLogin
+  display_login
   print "Create new user? (Y/N): "
   answer = gets.chomp
   if answer == 'Y' or answer == 'y'
@@ -159,14 +157,14 @@ def createNewUser
     userFile = File.new("./user-data/#{user}.txt", "w+")
     userFile.close
     userInfoHash = { 'username' => user, 'realName' => realName, 'pass' => pass, 'balance' => 0.00 }
-    updateUserInfoFile(userInfoHash)
+    update_user_info_file(userInfoHash)
     $message = "User created. Please log in."
   else
     $message = ""
   end
   # Return to login menu
-  loginMenu
+  login_menu
 end
 
 # run program
-loginMenu()
+login_menu()
