@@ -1,6 +1,7 @@
 # Davo's banking app with basic functionality
 
-# Import Hash Helper file
+require 'date'
+# Nick's hash helper file
 require_relative 'readWriteHashes.rb'
 
 # assign global variables
@@ -13,7 +14,7 @@ def login_menu
   user = gets.chomp
   # FIXME: Check if user exists
   if File.file?("./user-data/#{user}.txt")
-    puts "User Exists"
+    # puts "User Exists"
     userHashes = read_from_file("./user-data/#{user}.txt")
     userInfoHash = userHashes.first
     # puts userHashes.first
@@ -37,7 +38,7 @@ def main_menu(userInfoHash)
   system('clear')
   display_menu
   display_msg
-  print "Choose Option (1-4): "
+  print "Choose Option (1-5): "
   input = gets.chomp
   case input
   # View Balance
@@ -63,6 +64,7 @@ def main_menu(userInfoHash)
   # View Transactions
   when "4"
     view_transactions(userInfoHash)
+    main_menu(userInfoHash)
   # Exit
   when "5"
     exit
@@ -163,7 +165,26 @@ end
 def view_transactions(userInfoHash)
   path = './user-data/' + userInfoHash['username'] + '_trans.txt'
   transHashArray = read_from_file(path)
-  puts transHashArray
+  # puts transHashArray
+  # Loop through all transactions
+  puts "Time                Amount      Balance"
+  transHashArray.each do |transHash|
+    # make time look pretty
+    time = DateTime.strptime(transHash['transTime'], '%Y-%m-%d %H:%M:%S %z')
+    timePretty = time.strftime('%d/%m/%Y %H:%M')
+    # Show two decimal places for money
+    if transHash['amount'] < 0
+      amount = '-$%.2f' % transHash['amount'].abs
+    else
+      amount = ' $%.2f' % transHash['amount']
+    end
+    # add padding
+    while amount.length < 10 do
+      amount += ' '
+    end
+    balance = '$%.2f' % transHash['balance']
+    puts "#{timePretty}   #{amount}   #{balance}"
+  end
   puts "Press enter to continue "
   gets
 end
