@@ -16,7 +16,7 @@ def login_menu
     puts "User Exists"
     userHashes = read_from_file("./user-data/#{user}.txt")
     userInfoHash = userHashes.first
-    puts userHashes.first
+    # puts userHashes.first
     print "Password: "
     # FIXME: Hide password
     pass = gets.chomp
@@ -48,7 +48,7 @@ def main_menu(userInfoHash)
   when "2"
     print "How much to deposit: $"
     amount = get_amount
-    update_balance(amount, userInfoHash)
+    add_transaction(amount, userInfoHash)
     $message = "Succesfully Deposited $%.2f" % amount
     $message += "\nNew Balance: $%.2f" % userInfoHash['balance']
     main_menu(userInfoHash)
@@ -56,12 +56,15 @@ def main_menu(userInfoHash)
   when "3"
     print "How much to withdraw: $"
     amount = get_amount
-    success = update_balance(-amount, userInfoHash)
+    add_transaction(-amount, userInfoHash)
     $message = "Succesfully Withdrew $%.2f" % amount
     $message += "\nNew Balance: $%.2f" % userInfoHash['balance']
     main_menu(userInfoHash)
-  # Exit
+  # View Transactions
   when "4"
+    view_transactions(userInfoHash)
+  # Exit
+  when "5"
     exit
   else
     $message = "ERROR: Invalid selection!"
@@ -78,7 +81,8 @@ def display_menu
   puts "| 1) View Balance           |"
   puts "| 2) Deposit Money          |"
   puts "| 3) Withdraw Money         |"
-  puts "| 4) Exit                   |"
+  puts "| 4) Transaction History    |"
+  puts "| 5) Exit                   |"
   puts "|                           |"
   puts "-----------------------------"
   display_msg
@@ -93,6 +97,7 @@ def display_login
   puts "|                           |"
   puts "|   Please login            |"
   puts "|      to cointinue...      |"
+  puts "|                           |"
   puts "|                           |"
   puts "|                           |"
   puts "-----------------------------"
@@ -139,6 +144,31 @@ def update_balance(amount, userInfoHash)
   end
 end
 
+def add_transaction(amount, userInfoHash)
+  update_balance(amount, userInfoHash)
+  # Check if transaction file exits
+  if File.file?("./user-data/#{userInfoHash['username']}_trans.txt")
+    puts "Transaction File exists"
+  else
+    puts "No Transaction File"
+    # Create transaction file if doesn't exist
+    transFile = File.new("./user-data/#{userInfoHash['username']}_trans.txt", "w")
+    transFile.close
+  end
+  transHash = { 'transTime' => Time.now, 'amount' => amount, 'balance' => userInfoHash['balance'] }
+  path = './user-data/' + userInfoHash['username'] + '_trans.txt'
+  append_to_file(path, transHash)
+end
+
+def view_transactions(userInfoHash)
+  path = './user-data/' + userInfoHash['username'] + '_trans.txt'
+  transHashArray = read_from_file(path)
+  puts transHashArray
+  puts "Press enter to continue "
+  gets
+end
+
+
 def create_new_user
   system('clear')
   $message = "ERROR: User not found"
@@ -154,7 +184,7 @@ def create_new_user
     # FIXME: Hide password
     pass = gets.chomp
     # Save details to new file
-    userFile = File.new("./user-data/#{user}.txt", "w+")
+    userFile = File.new("./user-data/#{user}.txt", "w")
     userFile.close
     userInfoHash = { 'username' => user, 'realName' => realName, 'pass' => pass, 'balance' => 0.00 }
     update_user_info_file(userInfoHash)
