@@ -15,3 +15,4 @@
 #### Not Implemented Yet:
 - Password hashing
 - Hiding password when entered
+- Use regex to check for valid username/password creation
