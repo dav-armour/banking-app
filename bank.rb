@@ -40,23 +40,23 @@ def main_menu(user_info_hash)
   case input
   # View Balance
   when '1'
-    $message = "Balance: $%.2f" % user_info_hash['balance']
+    $message = 'Balance: $%.2f' % user_info_hash['balance']
     main_menu(user_info_hash)
   # Deposit Money
   when '2'
     print 'How much to deposit: $'
     amount = get_amount
     add_transaction(amount, user_info_hash)
-    $message = "Succesfully Deposited $%.2f" % amount
-    $message += "\nNew Balance: $%.2f" % user_info_hash['balance']
+    $message = 'Succesfully Deposited $%.2f' % amount
+    $message += '\nNew Balance: $%.2f' % user_info_hash['balance']
     main_menu(user_info_hash)
   # Withdraw Money
   when '3'
     print 'How much to withdraw: $'
     amount = get_amount
     add_transaction(-amount, user_info_hash)
-    $message = "Succesfully Withdrew $%.2f" % amount
-    $message += "\nNew Balance: $%.2f" % user_info_hash['balance']
+    $message = 'Succesfully Withdrew $%.2f' % amount
+    $message += '\nNew Balance: $%.2f' % user_info_hash['balance']
     main_menu(user_info_hash)
   # View Transactions
   when '4'
@@ -151,11 +151,13 @@ end
 def add_transaction(amount, user_info_hash)
   update_balance(amount, user_info_hash)
   # Create transaction file if doesn't exist
-  if !File.file?("./user-data/#{user_info_hash['username']}_trans.txt")
-    trans_file = File.new("./user-data/#{user_info_hash['username']}_trans.txt", 'w')
-    trans_file.close
-  end
-  trans_hash = { 'transTime' => Time.now, 'amount' => amount, 'balance' => user_info_hash['balance'] }
+  path = "./user-data/#{user_info_hash['username']}_trans.txt"
+  File.new(path, 'w').close unless File.file?(path)
+  trans_hash = {
+    'transTime' => Time.now,
+    'amount' => amount,
+    'balance' => user_info_hash['balance']
+  }
   path = './user-data/' + user_info_hash['username'] + '_trans.txt'
   append_to_file(path, trans_hash)
 end
@@ -208,7 +210,7 @@ def create_new_user
   display_login
   print 'Create new user? (Y/N): '
   answer = gets.chomp
-  if answer == 'Y' || answer == 'y'
+  if answer == 'y' || answer == 'Y'
     print 'Username: '
     user = gets.chomp
     print 'Real Name: '
@@ -219,7 +221,12 @@ def create_new_user
     # Save details to new file
     user_file = File.new("./user-data/#{user}.txt", 'w')
     user_file.close
-    user_info_hash = { 'username' => user, 'real_name' => real_name, 'pass' => pass, 'balance' => 0.00 }
+    user_info_hash = {
+      'username' => user,
+      'real_name' => real_name,
+      'pass' => pass,
+      'balance' => 0.00
+    }
     update_user_info_file(user_info_hash)
     $message = 'User created. Please log in.'
   else
