@@ -210,8 +210,8 @@ def create_new_user
   $message = 'ERROR: User not found'
   display_login
   print 'Create new user? (Y/N): '
-  answer = gets.chomp
-  if answer == 'y' || answer == 'Y'
+  answer = gets.chomp.downcase
+  if answer == 'y' || answer == 'yes'
     print 'Username: '
     user = gets.chomp
     print 'Real Name: '
@@ -220,8 +220,7 @@ def create_new_user
     # FIXME: Hide password
     pass = gets.chomp
     # Save details to new file
-    user_file = File.new("./user-data/#{user}.txt", 'w')
-    user_file.close
+    File.new("./user-data/#{user}.txt", 'w').close
     user_info_hash = {
       'username' => user,
       'real_name' => real_name,
