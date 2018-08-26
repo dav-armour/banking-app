@@ -1,5 +1,6 @@
 # Davo's banking app with basic functionality
-
+# Run 'sudo gem install json' to install the JSON gem
+require 'json'
 require 'date'
 # Nick's hash helper file
 require_relative 'readWriteHashes.rb'
@@ -20,7 +21,7 @@ def login_menu
     # FIXME: Hide password
     pass = gets.chomp
     if pass != user_info_hash['pass']
-      $message = "Password incorrect"
+      $message = 'Password incorrect'
       login_menu
     end
     user_info_hash['balance'] = user_info_hash['balance']

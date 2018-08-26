@@ -11,3 +11,7 @@
 - Login
 - Multiple users
 - Create new user
+
+#### Not Implemented Yet:
+- Password hashing
+- Hiding password when entered
