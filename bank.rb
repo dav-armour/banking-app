@@ -1,9 +1,13 @@
 # Davo's banking app with basic functionality
+
 # Run 'sudo gem install json' to install the JSON gem
-require 'json'
-require 'date'
-# Nick's hash helper file
-require_relative 'readWriteHashes.rb'
+# Run 'sudo gem install bcrypt' to install the BCrypt gem
+require 'json' # Used for saving data to file
+require 'bcrypt' # Used for encrypting passwords
+
+require 'io/console' # Used for hiding password input
+require 'date' # Used for transaction timestamp
+require_relative 'readWriteHashes.rb' # Nick's hash helper file
 
 # assign global variables
 $message = ''
@@ -19,13 +23,14 @@ def login_menu
     user_info_hash = user_hashes.first
     print 'Password: '
     # FIXME: Hide password
-    pass = gets.chomp
-    if pass != user_info_hash['pass']
+    pass = STDIN.noecho(&:gets).chomp
+    pass_hash = BCrypt::Password.new(user_info_hash['pass_hash'])
+    if pass_hash != pass
       $message = 'Password incorrect'
       login_menu
     end
     user_info_hash['balance'] = user_info_hash['balance']
-    $message = "Welcome #{user_info_hash['real_name']}"
+    $message = "Welcome #{user_info_hash['real_name'].capitalize}"
     main_menu(user_info_hash)
   else
     create_new_user
@@ -49,7 +54,7 @@ def main_menu(user_info_hash)
     amount = get_amount
     add_transaction(amount, user_info_hash)
     $message = 'Succesfully Deposited $%.2f' % amount
-    $message += '\nNew Balance: $%.2f' % user_info_hash['balance']
+    $message += "\nNew Balance: $%.2f" % user_info_hash['balance']
     main_menu(user_info_hash)
   # Withdraw Money
   when '3'
@@ -57,7 +62,7 @@ def main_menu(user_info_hash)
     amount = get_amount
     add_transaction(-amount, user_info_hash)
     $message = 'Succesfully Withdrew $%.2f' % amount
-    $message += '\nNew Balance: $%.2f' % user_info_hash['balance']
+    $message += "\nNew Balance: $%.2f" % user_info_hash['balance']
     main_menu(user_info_hash)
   # View Transactions
   when '4'
@@ -141,7 +146,7 @@ def update_balance(amount, user_info_hash)
   elsif (user_info_hash['balance'] + amount) >= 1_000_000
     system('clear')
     $message = 'ERROR: Your too rich for this bank.'
-    $message += '\nOnly supports balances below $1 million'
+    $message += "\nOnly supports balances below $1 million"
     main_menu(user_info_hash)
   else
     user_info_hash['balance'] += amount.round(2)
@@ -218,13 +223,14 @@ def create_new_user
     real_name = gets.chomp
     print 'Password: '
     # FIXME: Hide password
-    pass = gets.chomp
+    pass = STDIN.noecho(&:gets).chomp
+    pass_hash = BCrypt::Password.create(pass)
     # Save details to new file
     File.new("./user-data/#{user}.txt", 'w').close
     user_info_hash = {
       'username' => user,
       'real_name' => real_name,
-      'pass' => pass,
+      'pass_hash' => pass_hash,
       'balance' => 0.00
     }
     update_user_info_file(user_info_hash)

@@ -11,8 +11,8 @@
 - Login
 - Multiple users
 - Create new user
-
-#### Not Implemented Yet:
 - Password hashing
 - Hiding password when entered
+
+#### Not Implemented Yet:
 - Use regex to check for valid username/password creation
