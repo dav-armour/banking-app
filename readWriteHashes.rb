@@ -35,7 +35,6 @@ def append_to_file(path, data)
   # See for more on Open method options:  https://ruby-doc.org/core-2.5.1/IO.html#method-c-new
   File.open(path, 'a') do |f|
     f.puts hash_to_json(data)
-    f.close
   end
 end
 
@@ -48,7 +47,6 @@ def read_from_file(path)
       hash = json_to_hash(line)
       array.push(json_to_hash(line)) # You could use eval instead of the JSON gem to convert a stringified hash back to a hash, but: https://stackoverflow.com/questions/637421/is-eval-supposed-to-be-nasty
     end
-    f.close
   end
   array
 end
