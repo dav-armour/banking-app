@@ -10,7 +10,7 @@ require 'date' # Used for transaction timestamp
 require_relative 'readWriteHashes.rb' # Nick's hash helper file
 
 # assign global variables
-$message = ''
+$message = '' # Used by display methods to show messages underneath
 
 def login_menu
   system('clear')
@@ -18,20 +18,22 @@ def login_menu
   $message = ''
   print 'Username: '
   user = gets.chomp
+  # Check if user file exists else create new user
   if File.file?("./user-data/#{user}.txt")
+    # Read in user info from file
     user_hashes = read_from_file("./user-data/#{user}.txt")
     user_info_hash = user_hashes.first
     print 'Password: '
-    # FIXME: Hide password
+    # Get password input and hide it
     pass = STDIN.noecho(&:gets).chomp
+    # Convert stored password to password object to enable comparison
     pass_hash = BCrypt::Password.new(user_info_hash['pass_hash'])
     if pass_hash != pass
       $message = 'Password incorrect'
       login_menu
     end
-    user_info_hash['balance'] = user_info_hash['balance']
     $message = "Welcome #{user_info_hash['real_name'].capitalize}"
-    main_menu(user_info_hash)
+    main_menu(user_info_hash) # Succesful Login!
   else
     create_new_user
   end

@@ -1,1 +1,1 @@
-{"username":"sample","real_name":"sample","pass_hash":"$2a$10$76tNWc6sln9rcDmELnZiP.kshG0vK5nyBzhJGeB91kQx01JZWEqyu","balance":6125.0}
+{"username":"sample","real_name":"sample","pass_hash":"$2a$10$76tNWc6sln9rcDmELnZiP.kshG0vK5nyBzhJGeB91kQx01JZWEqyu","balance":6175.0}
